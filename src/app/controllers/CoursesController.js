@@ -34,6 +34,15 @@ class CoursesController {
       next(error);
     }
   }
+  async restore(req, res, next) {
+    try {
+      const courseId = req.params.id;
+      await Courses.restore({ _id: courseId });
+      return res.redirect("back");
+    } catch (error) {
+      next(error);
+    }
+  }
   async destroy(req,res,next){
     try {
       const courseId = req.params.id;
@@ -43,13 +52,21 @@ class CoursesController {
       next(error);
     }
   }
+  async forceDestroy(req,res,next){
+    try {
+      const courseId = req.params.id;
+      await Courses.deleteOne({ _id: courseId });
+      return res.redirect("back");
+    } catch (error) {
+      next(error);
+    }
+  }
   async store(req, res, next) {
     try {
-      const formData = req.body;
-      formData.image = `https://i.ytimg.com/vi/${req.body.videoId}/maxresdefault.jpg`;
+      req.body.image = `https://i.ytimg.com/vi/${req.body.videoId}/maxresdefault.jpg`;
       // const course = new Courses(formData);
       // await course.save();
-      await Courses.create(formData);
+      await Courses.create(req.body);
       res.redirect("/");
     } catch (error) {
       next(err);
