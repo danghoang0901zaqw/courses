@@ -4,8 +4,12 @@ const Course = require("../models/Course");
 class MeController {
   async storeCourses(req, res, next) {
     try {
-      const courses = await Course.find({});
+      const [courses, deletedCount] = await Promise.all([
+        Course.find({}),
+        Course.countDocumentsWithDeleted({ deleted: true }),
+      ]);
       return res.render("me/stored-courses", {
+        deletedCount,
         courses: multipleMongooseToObject(courses),
       });
     } catch (error) {
