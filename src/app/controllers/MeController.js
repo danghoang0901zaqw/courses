@@ -4,10 +4,15 @@ const Course = require("../models/Course");
 class MeController {
   async storeCourses(req, res, next) {
     try {
+      let CourseQuery = Course.find({});
+      if (req.query.hasOwnProperty("_sort")) {
+        CourseQuery = CourseQuery.sort({ [req.query.column]: req.query.type });
+      }
       const [courses, deletedCount] = await Promise.all([
-        Course.find({}),
+        CourseQuery,
         Course.countDocumentsWithDeleted({ deleted: true }),
       ]);
+      // console.log(courses);
       return res.render("me/stored-courses", {
         deletedCount,
         courses: multipleMongooseToObject(courses),
